@@ -9,13 +9,10 @@ module ActionView
 
         _out = text_field(object_name, method, options)
 
+        # removing name attribute since values will be returned in #{object_name}[set_#{method}]
         _out << raw(%{
           <script type="text/javascript">
-            $(document).ready(function(){
-              // removing name attribute since values will be returned in #{object_name}[set_#{method}]
-              $('.#{text_field_class}').autoSuggest('#{source}', #{autosuggest_options.to_json})
-                                       .removeAttr('name');
-            });
+            $(document).ready(function(){$('.#{text_field_class}').autoSuggest('#{source}', #{autosuggest_options.to_json}).removeAttr('name');});
           </script>
         })
         _out
