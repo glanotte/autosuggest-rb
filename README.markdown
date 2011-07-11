@@ -2,7 +2,7 @@
 
 ## Summary
 
-This gem wraps the jQuery autoSuggest plugin and provides helpers to make it easy to use in rails. It supports ActiveRecord, Mongoid, and MongoMapper. This was influenced by crowdint's rails3-jquery-autocomplete gem.
+This gem wraps the jQuery autoSuggest plugin and provides helpers to make it easy to use in rails. It supports ActiveRecord only. This was influenced by crowdint's rails3-jquery-autocomplete gem.
 
 ## Installing
 
@@ -25,15 +25,12 @@ And include jquery.autoSuggest.js and autoSuggest.css on your layouts
 
 ## Usage
 
-### Model Example
+### Model
 
-Assuming you have a Tag model:
-
-    class Tag < ActiveRecord::Base
-    end
-
-    create_table :tags do |t|
-      t.string :name
+  Install acts_as_taggable_on.
+  
+    class User < ActiveRecord
+      acts_as_taggable_on :skills
     end
 
 ### Controller
@@ -41,26 +38,26 @@ Assuming you have a Tag model:
 Your controller will need an action to respond to the autosuggest textfield. To add it to your controller call the autosuggest method and pass it the name of the model and column name as in the following example:
 
     class RecipesController < ApplicationController
-      autosuggest :tag, :name
+      autosuggest :skills
     end
 
-This will create a autosuggest_tag_name action. You then need to add a route for that action
+This will create a autosuggest_skills action. You then need to add a route for that action
 
     resources :recipes do
-      get :autosuggest_tag_name, :on => :collection
+      get :autosuggest_skills, :on => :collection
     end
 
 From the view you can create the autosuggest field like this:
 
     form_for @recipe do |f|
-      f.autosuggest_field :tags, autosuggest_tag_name_recipes_path
+      f.autosuggest_field :tags, autosuggest_skills_users_path
     end
 
 By default, autosuggest only queries the db for existing tags, but if you want to be able to create new ones, just pass these options:
 
-    f.autosuggest_field :tags, autosuggest_tag_name_recipes_path, :autosuggest_options => { "newValuesInputName" => recipes[new_tags]" }
+    f.autosuggest_field :tags, autosuggest_skills_users_path, :autosuggest_options => { "newValuesInputName" => users[new_skills]" }
 
-Then you can do whatever you want from the controller using params[:recipes][:new_tags]
+Then you can do whatever you want from the controller using params[:users][:new_skills]
 
 
 These are the default options:
