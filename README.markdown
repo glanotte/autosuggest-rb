@@ -1,8 +1,8 @@
-# autosuggest-rb
+# autosuggest-rb for Acts_as_taggable_on (http://github.com/Pajk/acts-as-taggable-on)
 
 ## Summary
 
-This gem wraps the jQuery autoSuggest plugin and provides helpers to make it easy to use in rails. It supports ActiveRecord only. This was influenced by crowdint's rails3-jquery-autocomplete gem.
+This gem wraps the jQuery autoSuggest plugin and provides helpers to make it easy to use in rails. It supports ActiveRecord only. This was influenced by crowdint's rails3-jquery-autocomplete gem. This version works only with acts_as_taggable_on gem.
 
 ## Installing
 
@@ -37,30 +37,48 @@ And include jquery.autoSuggest.js and autoSuggest.css on your layouts
 
 Your controller will need an action to respond to the autosuggest textfield. To add it to your controller call the autosuggest method and pass it the name of the model and column name as in the following example:
 
-    class RecipesController < ApplicationController
+    class UsersController < ApplicationController
       autosuggest :skills
     end
 
 This will create a autosuggest_skills action. You then need to add a route for that action
 
-    resources :recipes do
+    resources :users do
       get :autosuggest_skills, :on => :collection
     end
 
 From the view you can create the autosuggest field like this:
 
-    form_for @recipe do |f|
-      f.autosuggest_field :tags, autosuggest_skills_users_path
+    form_for @user do |f|
+      f.autosuggest_field :skills, autosuggest_skills_users_path
     end
 
 By default, autosuggest only queries the db for existing tags, but if you want to be able to create new ones, just pass these options:
 
-    f.autosuggest_field :tags, autosuggest_skills_users_path, :autosuggest_options => { "newValuesInputName" => users[new_skills]" }
+    f.autosuggest_field :skills, autosuggest_skills_users_path, :autosuggest_options => { "newValuesInputName" => users[new_skills]" }
 
-Then you can do whatever you want from the controller using params[:users][:new_skills]
+Then you can do whatever you want from the controller using params[:users][:new_skills]. 
+You may want to use this method in your create and update actions:
 
+  ...
+  gather_new_tags([:skills, :offers, :demands, :interests], :users)
+  ...
+  
+  # add new tags if set
+  def gather_new_tags(tags, section)
+    for tag in tags
+      list = "#{tag.to_s.singularize}_list".to_sym
+      singular = self.controller_name.singularize.to_sym
+      new_tags = "new_#{tag}".to_sym
+      if params[section] && params[section][new_tags]
+        params[singular][list] += params[section][new_tags].join(",")
+      end
+    end
+  end
 
-These are the default options:
+Acts_as_taggable_on gem will then create new tags for you automatically.
+
+These are the default autosuggest_options:
 
     "queryParam" => "query",
     "selectedItemProp" => "name",
