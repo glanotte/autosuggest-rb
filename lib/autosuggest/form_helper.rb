@@ -9,6 +9,7 @@ module ActionView
         autosuggest_options[:startText] = I18n.t("autosuggest.startText")
         autosuggest_options[:emptyText] = I18n.t("autosuggest.emptyText")
         autosuggest_options[:limitText] = I18n.t("autosuggest.limitText")
+        autosuggest_options[:addNew] = I18n.t("autosuggest.addNew")
         
         _out = text_field(object_name, method, options)
 
