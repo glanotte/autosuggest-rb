@@ -6,7 +6,10 @@ module ActionView
         options[:class] = "#{options[:class].to_s} #{text_field_class}"
         autosuggest_options = options.delete(:autosuggest_options) || {}
         autosuggest_options.reverse_merge!("queryParam" => "query", "selectedItemProp" => "name", "searchObjProps" => "name", "neverSubmit" => "true", "asHtmlName" => "#{object_name}[set_#{method}]")
-
+        autosuggest_options[:startText] = I18n.t("autosuggest.startText")
+        autosuggest_options[:emptyText] = I18n.t("autosuggest.emptyText")
+        autosuggest_options[:limitText] = I18n.t("autosuggest.limitText")
+        
         _out = text_field(object_name, method, options)
 
         # removing name attribute since values will be returned in #{object_name}[set_#{method}]
