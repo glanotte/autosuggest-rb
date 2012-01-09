@@ -4,13 +4,18 @@ module Autosuggest
   module ControllerMacros
     # when called, you must add a custom route for action like this:
     # resources :products do
-    #   get :autosuggest_context, :on => :collection
+    #   get :autosuggest_context_on_taggable, :on => :collection
     # end
-    def autosuggest_tag(context, options={})
+    # @param context used with acts_as_taggable_on, by default is 'tags'
+    # @param options[:limit] the amount of tags returned
+    # 'taggable_type' used by ActsAsTaggableOn will be based on Controller's name
+    # ex: ProductsController => 'Product'
+    def autosuggest_tag(context='tags', options={})
       options[:limit] ||= 10
       
       define_method "autosuggest_#{context}" do
-        results = ActsAsTaggableOn::Tag.named_like_on_context(params[:query], context).limit(options[:limit])
+        taggable = controller_name.singularize.camelize
+        results = ActsAsTaggableOn::Tag.named_like(params[:query]).joins(:taggings).where("taggable_type = ? AND context=?", taggable, context).limit(options[:limit])
         #results = Kernel.const_get(self.controller_name.singularize.camelize).tag_counts_on(context).named_like(params[:query]).limit(options[:limit])
         render :json => Yajl::Encoder.encode(results.map{|r| {:name => r.name, :value => r.name}})
       end
