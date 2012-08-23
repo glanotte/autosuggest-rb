@@ -1,3 +1,5 @@
+require 'simple_form'
+
 module ActionView
   module Helpers
     module FormHelper
